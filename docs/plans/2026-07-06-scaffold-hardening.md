@@ -1,7 +1,7 @@
 # Plan: Scaffold self-audit and hardening
 
 - **Date:** 2026-07-06
-- **Status:** active
+- **Status:** done
 - **Original request:** "Can you help me improve my claude scaffold repo. It should improve my way of using agentic coding. Critique what is already there, how i can have useful skills to improve my work. Rules that needs to follow, Skills that knows how to be used and proper roadmap and decisions"
 
 ## Goal
@@ -67,16 +67,19 @@ Make the scaffold obey its own rules and coexist cleanly with the owner's global
 | 8 | README.md | drift fixes + verification path | 5 | yes |
 | 9 | memory/* | new entries + index | 5 | yes |
 | 10 | docs/handovers/* | handover | 5 | yes |
+| 11 | .gitattributes | created (LF policy; CRLF warnings at baseline commit) | 1 | amended |
+| 12 | .claude/skills/critique/SKILL.md | tier-audit checklist item 7 added (mandated by ADR 0006) | 4-loop | amended |
 
 ## Feature differential (fill at critique time)
 | Requirement | Planned | Delivered | Gap |
 |---|---|---|---|
-| Critique of what's there | full critique in final report | | |
-| Useful skills to improve work | coexistence rule + roadmap items, NOT new skills | | |
-| Rules that need to be followed | precedence + tier rules in CLAUDE.md | | |
-| Skills that know how to be used | trigger-eval milestone + ADR 0005 overlap rule | | |
-| Proper roadmap | docs/ROADMAP.md | | |
-| Proper decisions | ADRs 0005, 0006 | | |
+| Critique of what's there | full critique in final report | ✅ final report + subagent critique of the changes themselves | none |
+| Useful skills to improve work | coexistence rule + roadmap items, NOT new skills | ✅ as planned + critique-skill tier-audit item | deliberate: no new skill files (ADR 0005 rationale); surfaced to owner |
+| Rules that need to be followed | precedence + tier rules in CLAUDE.md | ✅ both sections + prime-directive binding clause | none |
+| Skills that know how to be used | trigger-eval milestone + ADR 0005 overlap rule | ✅ + tier reading rule for absolutist skill descriptions | 18 skill descriptions not yet rewritten for tiers — tracked as roadmap "skill-trigger evaluation" |
+| Proper roadmap | docs/ROADMAP.md | ✅ seeded with ADR-promised future work | none |
+| Proper decisions | ADRs 0005, 0006 | ✅ | none |
 
 ## Amendments
 <!-- Append-only. -->
+- 2026-07-06: Critique loop 1 (subagent critic: 0 blockers, 7 majors, 10 minors, 5 nits). All majors fixed: prime-directive/tier contradictions, README hard-rules drift, L-tier "multi-file" overreach, checker false-negative on empty skill dir, tier-table partition gaps, absolutist skill descriptions (reading rule added; full rewrite deferred to roadmap trigger-eval milestone). Minors fixed: checker CRLF asymmetry, ADR ok-line, path-style refs, command validation, ADR wording honesty, roadmap exit-criteria scope. Added ledger rows 11–12. No impact on phase structure. Incident during loop: `git checkout -- README.md` during a checker attack test discarded two uncommitted README fixes; re-applied immediately (lesson: restore planted defects surgically, not via git, when the tree is dirty).
