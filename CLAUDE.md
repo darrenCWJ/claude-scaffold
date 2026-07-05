@@ -9,9 +9,25 @@ This repo is a general-purpose scaffold. It defines HOW Claude works, not WHAT i
 3. **Never lose state.** Write memory aggressively, record design decisions, and leave a handover whenever a session may end (see `.claude/skills/memory/`, `.claude/skills/design-decisions/`, `.claude/skills/handover/`).
 4. **Never leave a mess.** Every task ends with cleanup and a final check (see `.claude/skills/cleanup/` and `.claude/skills/final-check/`).
 
+These directives bind through the task-tier table below: an S-tier task satisfies them with verification plus a memory note. Two duties are tier-independent — any non-obvious choice gets an ADR, and scope drift is never silent.
+
+## Task tiers — classify at Phase 0, out loud (ADR 0006)
+
+Phase 0 (Orient) runs for EVERY task — it is where the tier gets set. Tiers govern Phases 1–5. When unsure, round up. Reclassify upward the moment a task outgrows its tier — never downward mid-task.
+
+| Tier | Definition | Required | Not required |
+|---|---|---|---|
+| **S** | ALL of: single-step, unambiguous, ≲15 min, ≤2 files | Verify the result (verification skill); memory note if anything surprised you | Plan file, critique file, loops, cleanup pass, final-check report, handover, roadmap update |
+| **M** (default) | Fits one session; fails any S condition | Full workflow (Phases 0–5); self-critique acceptable; handover if the session may end | Subagent critic, subagent final-check |
+| **L** | Multi-session, architectural, or high-stakes (security, data loss, external publication) | Full workflow + subagent critic + subagent final-check + handover + roadmap update | Nothing |
+
+- Everything not listed as "Not required" stays mandatory at that tier.
+- A task that exceeds its tier's definition mid-flight (an "S" fix now touching a third file) is mis-tiered: say so, re-tier, and run the newly required gates retroactively.
+- Skill descriptions written before tiers use absolutist triggers ("every task", "ANYTHING"). The tier table governs: read them as "every M/L task" — except verification and memory, which apply at every tier.
+
 ## The workflow: Plan → Execute → Critique → Loop → Ship
 
-Every non-trivial task moves through these phases in order. Do not skip phases; do explicitly state which phase you are in.
+Phase 0 runs for every task; M and L tasks continue through Phases 1–5 in order. Do not skip phases; do explicitly state which phase you are in.
 
 ### Phase 0 — Orient
 - Invoke the **orient** skill: read `memory/MEMORY.md`, `docs/ROADMAP.md` (if present), the latest file in `docs/handovers/` (if any), and `docs/decisions/` index; map unfamiliar territory before touching it; find the project's verification path and run it for a baseline.
@@ -68,6 +84,17 @@ Every non-trivial task moves through these phases in order. Do not skip phases; 
 
 - Any choice between alternatives that a future reader would ask "why?" about gets an ADR in `docs/decisions/`, numbered sequentially, using `templates/decision.md`.
 - Record rejected alternatives and the reason for rejection. The rejection reasons are usually more valuable than the choice itself.
+
+## Precedence & coexistence (ADR 0005)
+
+This scaffold usually runs alongside a large global layer (`~/.claude` rules, plugins like superpowers/ECC) that overlaps it. Resolution order:
+
+1. Explicit user instruction in the session
+2. This CLAUDE.md and this repo's skills — **process authority**: phases, artifacts, gates
+3. Global rules/skills — **domain authority**: language patterns, review checklists, TDD mechanics, tool recipes
+4. Model defaults
+
+When a global process skill overlaps a scaffold skill (brainstorming, planning, debugging, verification), the scaffold's artifact and gate win; use the global one for technique only. Never run two overlapping process protocols for the same step.
 
 ## Slash commands
 
