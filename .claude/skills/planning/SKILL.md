@@ -1,12 +1,12 @@
 ---
 name: planning
-description: Produce a phased, verifiable plan before any non-trivial work. Use at the start of EVERY task with more than one step — whenever the user says plan, build, create, implement, refactor, or describes multi-part work — and again when scope changes mid-task. If unsure whether a task needs a plan, it needs a plan.
+description: Produce a phased, verifiable plan before any non-trivial work. Use at the start of every M/L-tier task (any task with more than one step) — whenever the user says plan, build, create, implement, refactor, or describes multi-part work — and again when scope changes mid-task. If unsure whether a task needs a plan, it needs a plan.
 ---
 
 # Planning
 
 ## When to plan
-Any task with >1 step, any ambiguity, or any risk of rework. If unsure whether it needs a plan, it needs a plan. Trivial single-step tasks are exempt.
+Any task with >1 step, any ambiguity, or any risk of rework. If unsure whether it needs a plan, it needs a plan. Trivial single-step tasks (S tier) are exempt.
 
 ## Procedure
 

@@ -37,6 +37,7 @@ CLAUDE.md                    # Always-loaded protocol: Plan → Execute → Crit
     brainstorm/              #   diverge (8-15 ideas, forced lenses) then converge (criteria first)
     web-testing/             #   Playwright browser verification: load/render/work/sizes/fail
     roadmap/                 #   living project-level phases: Now/Next/Later, done log, exit criteria
+    context-management/      #   lean context, survive compaction: write state before it's lost
   commands/                  # /init-project /plan /critique /handover /final-check /decision
 docs/
   ROADMAP.md                 # living project map (created by /init-project): Now/Next/Later, done log

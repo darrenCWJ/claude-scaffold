@@ -23,6 +23,8 @@ for d in .claude/skills/*/; do
   fm=$(frontmatter "$f")
   echo "$fm" | grep -q '^name:' || say_fail "$f: missing name:"
   echo "$fm" | grep -q '^description:' || say_fail "$f: missing description:"
+  desc=$(echo "$fm" | grep '^description:' | sed 's/^description:[[:space:]]*//')
+  [ "${#desc}" -ge 80 ] || say_fail "$f: description under 80 chars — descriptions carry the trigger; say WHEN to use it"
   count=$((count + 1))
 done
 say_ok "checked $count SKILL.md files (failures, if any, listed above)"

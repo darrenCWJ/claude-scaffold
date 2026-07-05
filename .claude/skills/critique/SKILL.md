@@ -1,6 +1,6 @@
 ---
 name: critique
-description: Adversarial review of a deliverable against its plan and the original request. Use before declaring ANYTHING done, after each execution phase, and whenever the user says review, check this, or is this good — even when the work looks clean, especially when it looks clean.
+description: Adversarial review of a deliverable against its plan and the original request. Use before declaring any M/L-tier work done, after each execution phase, and whenever the user says review, check this, or is this good — even when the work looks clean, especially when it looks clean.
 ---
 
 # Critique

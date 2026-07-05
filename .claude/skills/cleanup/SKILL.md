@@ -1,6 +1,6 @@
 ---
 name: cleanup
-description: Remove work debris and resolve loose ends before shipping. Use in the ship phase of every task, after loops conclude, when the user says clean up or tidy, or when temp files, debug residue, stale TODOs, or unexplained ledger rows have accumulated. Always runs BEFORE final-check.
+description: Remove work debris and resolve loose ends before shipping. Use in the ship phase of every M/L task, after loops conclude, when the user says clean up or tidy, or when temp files, debug residue, stale TODOs, or unexplained ledger rows have accumulated. Always runs BEFORE final-check.
 ---
 
 # Cleanup
