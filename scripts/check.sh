@@ -39,7 +39,7 @@ done
 echo "== 3. ADRs numbered sequentially from 0001, no gaps or duplicates =="
 adrs=$(ls docs/decisions/ 2>/dev/null | grep -E '^[0-9]{4}-' | cut -c1-4 | sort)
 if [ -z "$adrs" ]; then
-  say_fail "no ADRs found in docs/decisions/"
+  say_ok "no ADRs yet (fresh project — the first recorded decision creates 0001)"
 else
   expect=1 seq_ok=1
   for n in $adrs; do
@@ -73,8 +73,11 @@ for f in .claude/commands/*.md; do
 done
 
 echo "== 7. Core artifacts present =="
-[ -f docs/ROADMAP.md ] || say_fail "docs/ROADMAP.md missing (ADR 0004 mandates it)"
-tr -d '\r' < docs/ROADMAP.md 2>/dev/null | grep -q '^- \*\*Updated:\*\*' || say_fail "ROADMAP.md missing Updated: line"
+if [ -f docs/ROADMAP.md ]; then
+  tr -d '\r' < docs/ROADMAP.md | grep -q '^- \*\*Updated:\*\*' || say_fail "ROADMAP.md missing Updated: line"
+else
+  echo "note: docs/ROADMAP.md not created yet — run /init-project when starting a real project"
+fi
 [ -f CLAUDE.md ] || say_fail "CLAUDE.md missing"
 [ -f README.md ] || say_fail "README.md missing"
 
