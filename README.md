@@ -37,15 +37,21 @@ CLAUDE.md                    # Always-loaded protocol: Plan → Execute → Crit
     roadmap/                 #   living project-level phases: Now/Next/Later, done log, exit criteria
   commands/                  # /plan /critique /handover /final-check /decision
 docs/
+  ROADMAP.md                 # living project map: Now/Next/Later, done log, dropped-with-reason
   plans/                     # one file per plan
   handovers/                 # newest file = current state
   decisions/                 # numbered ADRs
-templates/                   # plan, handover, decision, critique
+templates/                   # plan, handover, decision, critique, roadmap
 memory/                      # MEMORY.md index + one fact per file
+scripts/check.sh             # the scaffold's own verification path (structural consistency)
 ```
 
 ## The workflow
 
-Every non-trivial task: **Orient** (read memory, handover, decisions) → **Plan** (phased, riskiest first) → **Execute** (ledger every change) → **Critique** (attack the work) → **Loop** (max 3 by default, then escalate) → **Ship** (cleanup, final check, persist state).
+Every task is tiered first — **S** (trivial: verify only), **M** (default: full workflow), **L** (multi-session: full workflow + independent gates). M and L tasks run: **Orient** (read memory, roadmap, handover, decisions) → **Plan** (phased, riskiest first) → **Execute** (ledger every change) → **Critique** (attack the work) → **Loop** (max 3 by default, then escalate) → **Ship** (cleanup, final check, persist state).
 
 Hard rules: no work without a plan, no "done" without the final-check gate, no silent scope drift, no decision without an ADR, no session end without a handover.
+
+Running alongside a global `~/.claude` config? This scaffold owns **process** (phases, artifacts, gates); the global layer owns **domain technique**. See ADR 0005.
+
+Verify the scaffold itself: `bash scripts/check.sh` (exit 0 = structurally consistent).

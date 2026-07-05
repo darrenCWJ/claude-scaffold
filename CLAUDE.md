@@ -9,9 +9,21 @@ This repo is a general-purpose scaffold. It defines HOW Claude works, not WHAT i
 3. **Never lose state.** Write memory aggressively, record design decisions, and leave a handover whenever a session may end (see `.claude/skills/memory/`, `.claude/skills/design-decisions/`, `.claude/skills/handover/`).
 4. **Never leave a mess.** Every task ends with cleanup and a final check (see `.claude/skills/cleanup/` and `.claude/skills/final-check/`).
 
+## Task tiers — classify BEFORE working (ADR 0006)
+
+State the tier out loud at orient time. When unsure, round up. Reclassify upward the moment a task outgrows its tier — never downward mid-task.
+
+| Tier | What it is | Mandatory | Skippable |
+|---|---|---|---|
+| **S** | Single-step, unambiguous, ≲15 min, ≤2 files | Verify the result; note anything surprising in memory | Plan file, critique file, handover, roadmap |
+| **M** (default) | Normal task, one session | Full workflow below; self-critique acceptable | Subagent critic; handover only if session may end |
+| **L** | Multi-session, multi-file, architectural, or high-stakes | Full workflow + subagent critic + subagent final-check + handover + roadmap update | Nothing |
+
+A task tiered S that ends up touching 6 files was mis-tiered — say so and run the M gates retroactively.
+
 ## The workflow: Plan → Execute → Critique → Loop → Ship
 
-Every non-trivial task moves through these phases in order. Do not skip phases; do explicitly state which phase you are in.
+Every M and L task moves through these phases in order. Do not skip phases; do explicitly state which phase you are in.
 
 ### Phase 0 — Orient
 - Invoke the **orient** skill: read `memory/MEMORY.md`, `docs/ROADMAP.md` (if present), the latest file in `docs/handovers/` (if any), and `docs/decisions/` index; map unfamiliar territory before touching it; find the project's verification path and run it for a baseline.
@@ -68,6 +80,17 @@ Every non-trivial task moves through these phases in order. Do not skip phases; 
 
 - Any choice between alternatives that a future reader would ask "why?" about gets an ADR in `docs/decisions/`, numbered sequentially, using `templates/decision.md`.
 - Record rejected alternatives and the reason for rejection. The rejection reasons are usually more valuable than the choice itself.
+
+## Precedence & coexistence (ADR 0005)
+
+This scaffold usually runs alongside a large global layer (`~/.claude` rules, plugins like superpowers/ECC) that overlaps it. Resolution order:
+
+1. Explicit user instruction in the session
+2. This CLAUDE.md and this repo's skills — **process authority**: phases, artifacts, gates
+3. Global rules/skills — **domain authority**: language patterns, review checklists, TDD mechanics, tool recipes
+4. Model defaults
+
+When a global process skill overlaps a scaffold skill (brainstorming, planning, debugging, verification), the scaffold's artifact and gate win; use the global one for technique only. Never run two overlapping process protocols for the same step.
 
 ## Slash commands
 
