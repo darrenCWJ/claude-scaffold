@@ -23,7 +23,7 @@ Phase 0 (Orient) runs for EVERY task — it is where the tier gets set. Tiers go
 
 - Everything not listed as "Not required" stays mandatory at that tier.
 - A task that exceeds its tier's definition mid-flight (an "S" fix now touching a third file) is mis-tiered: say so, re-tier, and run the newly required gates retroactively.
-- Some skill descriptions use absolutist triggers ("every task", "ANYTHING"). The tier table governs: read them as "every M/L task" — except verification and memory, which apply at every tier.
+- If a skill description ever conflicts with this table, the table governs. Verification and memory apply at every tier.
 
 ## The workflow: Plan → Execute → Critique → Loop → Ship
 
@@ -79,6 +79,7 @@ Phase 0 runs for every task; M and L tasks continue through Phases 1–5 in orde
 
 - Write a handover to `docs/handovers/` whenever: a session is ending, context is getting long, you're about to fan out major work, or the user says "handover".
 - A handover must let a fresh Claude with zero context resume within one read. Test it against that standard.
+- Long session? Manage the context window itself with the **context-management** skill: keep loads lean, and write state to artifacts BEFORE compaction can take it.
 
 ## Design decisions (summary — full detail in `.claude/skills/design-decisions/`)
 

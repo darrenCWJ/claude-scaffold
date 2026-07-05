@@ -1,6 +1,6 @@
 ---
 name: final-check
-description: The ship gate — a verification checklist that must pass before any task is declared done. Use as the LAST step of every non-trivial task, after cleanup, and whenever about to tell the user done, finished, complete, or shipped. No PASS verdict, no done.
+description: The ship gate — a verification checklist that must pass before any task is declared done. Use as the LAST step of every M/L task, after cleanup, and whenever about to tell the user done, finished, complete, or shipped. No PASS verdict, no done.
 ---
 
 # Final check
