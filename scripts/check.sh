@@ -11,58 +11,82 @@ fail=0
 say_fail() { echo "FAIL: $1"; fail=1; }
 say_ok()   { echo "  ok: $1"; }
 
-echo "== 1. Every skill has frontmatter with name: and description: =="
-for f in .claude/skills/*/SKILL.md; do
-  head -1 "$f" | grep -q '^---$' || say_fail "$f: missing frontmatter opener"
-  awk '/^---$/{n++} n==1' "$f" | grep -q '^name:' || say_fail "$f: missing name:"
-  awk '/^---$/{n++} n==1' "$f" | grep -q '^description:' || say_fail "$f: missing description:"
+# All text reads strip \r so verdicts match across Windows and Linux checkouts.
+frontmatter() { awk '/^---\r?$/{n++; next} n==1' "$1" | tr -d '\r'; }
+
+echo "== 1. Every skill dir has SKILL.md with name: and description: =="
+count=0
+for d in .claude/skills/*/; do
+  f="${d}SKILL.md"
+  if [ ! -f "$f" ]; then say_fail "$d: no SKILL.md"; continue; fi
+  head -1 "$f" | tr -d '\r' | grep -q '^---$' || say_fail "$f: missing frontmatter opener"
+  fm=$(frontmatter "$f")
+  echo "$fm" | grep -q '^name:' || say_fail "$f: missing name:"
+  echo "$fm" | grep -q '^description:' || say_fail "$f: missing description:"
+  count=$((count + 1))
 done
-[ "$fail" -eq 0 ] && say_ok "$(ls .claude/skills | wc -l | tr -d ' ') skills have valid frontmatter"
+say_ok "checked $count SKILL.md files (failures, if any, listed above)"
 
 echo "== 2. Skill dir names match frontmatter name: =="
-for f in .claude/skills/*/SKILL.md; do
-  dir=$(basename "$(dirname "$f")")
-  fmname=$(awk '/^---$/{n++} n==1' "$f" | grep '^name:' | sed 's/^name:[[:space:]]*//')
+for d in .claude/skills/*/; do
+  f="${d}SKILL.md"
+  [ -f "$f" ] || continue  # already failed in section 1
+  dir=$(basename "$d")
+  fmname=$(frontmatter "$f" | grep '^name:' | sed 's/^name:[[:space:]]*//')
   [ "$dir" = "$fmname" ] || say_fail "$f: dir '$dir' != name '$fmname'"
 done
 
 echo "== 3. ADRs numbered sequentially from 0001, no gaps or duplicates =="
-nums=$(ls docs/decisions/ | grep -E '^[0-9]{4}-' | cut -c1-4 | sort)
-expect=1
-for n in $nums; do
-  printf -v want '%04d' "$expect"
-  [ "$n" = "$want" ] || say_fail "ADR numbering: expected $want, found $n"
-  expect=$((expect + 1))
-done
-say_ok "$(echo "$nums" | wc -l | tr -d ' ') ADRs, sequential"
+adrs=$(ls docs/decisions/ 2>/dev/null | grep -E '^[0-9]{4}-' | cut -c1-4 | sort)
+if [ -z "$adrs" ]; then
+  say_fail "no ADRs found in docs/decisions/"
+else
+  expect=1 seq_ok=1
+  for n in $adrs; do
+    printf -v want '%04d' "$expect"
+    if [ "$n" != "$want" ]; then say_fail "ADR numbering: expected $want, found $n"; seq_ok=0; fi
+    expect=$((expect + 1))
+  done
+  [ "$seq_ok" -eq 1 ] && say_ok "$(echo "$adrs" | wc -l | tr -d ' ') ADRs, sequential"
+fi
 
 echo "== 4. Memory index integrity (every entry resolves; every file indexed) =="
-grep -E '^- \[' memory/MEMORY.md | grep -oE '\]\(([^)]+\.md)\)' | sed 's/](\(.*\))/\1/' | while read -r m; do
+tmp=$(mktemp)
+grep -E '^- \[' memory/MEMORY.md | grep -oE '\]\([^)]+\.md\)' | sed 's/](\(.*\))/\1/' | while read -r m; do
   [ -f "memory/$m" ] || echo "FAIL: MEMORY.md links missing file memory/$m"
-done | tee /tmp/memcheck.$$
-grep -q FAIL /tmp/memcheck.$$ && fail=1; rm -f /tmp/memcheck.$$
+done | tee "$tmp"
+grep -q FAIL "$tmp" && fail=1; rm -f "$tmp"
 for m in memory/*.md; do
   b=$(basename "$m")
   [ "$b" = "MEMORY.md" ] && continue
   grep -q "($b)" memory/MEMORY.md || say_fail "memory/$b not listed in MEMORY.md index"
 done
 
-echo "== 5. Templates referenced by skills/commands exist =="
+echo "== 5. Core templates exist =="
 for t in plan handover decision critique roadmap; do
   [ -f "templates/$t.md" ] || say_fail "templates/$t.md missing"
 done
 
-echo "== 6. Core artifacts present =="
+echo "== 6. Every command has description frontmatter =="
+for f in .claude/commands/*.md; do
+  frontmatter "$f" | grep -q '^description:' || say_fail "$f: missing description:"
+done
+
+echo "== 7. Core artifacts present =="
 [ -f docs/ROADMAP.md ] || say_fail "docs/ROADMAP.md missing (ADR 0004 mandates it)"
-grep -q '^- \*\*Updated:\*\*' docs/ROADMAP.md 2>/dev/null || say_fail "ROADMAP.md missing Updated: line"
+tr -d '\r' < docs/ROADMAP.md 2>/dev/null | grep -q '^- \*\*Updated:\*\*' || say_fail "ROADMAP.md missing Updated: line"
 [ -f CLAUDE.md ] || say_fail "CLAUDE.md missing"
 [ -f README.md ] || say_fail "README.md missing"
 
-echo "== 7. Every skill named in CLAUDE.md exists on disk =="
-grep -oE '\*\*[a-z-]+\*\* skill' CLAUDE.md | sed 's/\*\*\([a-z-]*\)\*\* skill/\1/' | sort -u | while read -r s; do
-  [ -d ".claude/skills/$s" ] || echo "FAIL: CLAUDE.md references skill '$s' with no directory"
-done | tee /tmp/skillcheck.$$
-grep -q FAIL /tmp/skillcheck.$$ && fail=1; rm -f /tmp/skillcheck.$$
+echo "== 8. Every skill referenced in CLAUDE.md / README exists on disk =="
+tmp=$(mktemp)
+{
+  grep -hoE '\*\*[a-z-]+\*\* skill' CLAUDE.md 2>/dev/null | sed 's/\*\*\([a-z-]*\)\*\* skill/\1/'
+  grep -hoE '\.claude/skills/[a-z-]+' CLAUDE.md README.md 2>/dev/null | sed 's|.*skills/||'
+} | sort -u | while read -r s; do
+  [ -d ".claude/skills/$s" ] || echo "FAIL: referenced skill '$s' has no directory"
+done | tee "$tmp"
+grep -q FAIL "$tmp" && fail=1; rm -f "$tmp"
 
 echo
 if [ "$fail" -eq 0 ]; then

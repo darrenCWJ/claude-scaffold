@@ -48,9 +48,9 @@ scripts/check.sh             # the scaffold's own verification path (structural 
 
 ## The workflow
 
-Every task is tiered first — **S** (trivial: verify only), **M** (default: full workflow), **L** (multi-session: full workflow + independent gates). M and L tasks run: **Orient** (read memory, roadmap, handover, decisions) → **Plan** (phased, riskiest first) → **Execute** (ledger every change) → **Critique** (attack the work) → **Loop** (max 3 by default, then escalate) → **Ship** (cleanup, final check, persist state).
+Every task is tiered first — **S** (trivial: verify + memory note), **M** (default: full workflow), **L** (multi-session: full workflow + independent gates). M and L tasks run: **Orient** (read memory, roadmap, handover, decisions) → **Plan** (phased, riskiest first) → **Execute** (ledger every change) → **Critique** (attack the work) → **Loop** (max 3 by default, then escalate) → **Ship** (cleanup, final check, persist state).
 
-Hard rules: no work without a plan, no "done" without the final-check gate, no silent scope drift, no decision without an ADR, no session end without a handover.
+Hard rules for M and L tasks: no work without a plan, no "done" without the final-check gate, no session end without a handover. At every tier: no silent scope drift, no decision without an ADR.
 
 Running alongside a global `~/.claude` config? This scaffold owns **process** (phases, artifacts, gates); the global layer owns **domain technique**. See ADR 0005.
 
