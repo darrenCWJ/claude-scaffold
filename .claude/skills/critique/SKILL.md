@@ -20,7 +20,7 @@ The author is the worst judge of their own work. Critique is an attack, not a pr
 4. **Consistency.** Does the work contradict itself anywhere? Does it contradict the design decisions on record, or memory?
 5. **Completeness of the invisible.** What's NOT there: missing error handling, missing citation, unstated assumption, unhandled case, missing file the plan promised?
 6. **Overreach.** Did anything get built that wasn't asked for? Scope creep is a defect too.
-7. **Tier audit.** Compare the declared task tier (CLAUDE.md Task tiers, ADR 0006) against what actually happened: an S-tier task that touched more than 2 files or spawned protocol artifacts was mis-tiered — flag it.
+7. **Tier audit.** Compare the declared task tier (CLAUDE.md Task tiers) against what actually happened: an S-tier task that touched more than 2 files or spawned protocol artifacts was mis-tiered — flag it.
 
 ## Output format
 

@@ -11,7 +11,7 @@ This repo is a general-purpose scaffold. It defines HOW Claude works, not WHAT i
 
 These directives bind through the task-tier table below: an S-tier task satisfies them with verification plus a memory note. Two duties are tier-independent — any non-obvious choice gets an ADR, and scope drift is never silent.
 
-## Task tiers — classify at Phase 0, out loud (ADR 0006)
+## Task tiers — classify at Phase 0, out loud
 
 Phase 0 (Orient) runs for EVERY task — it is where the tier gets set. Tiers govern Phases 1–5. When unsure, round up. Reclassify upward the moment a task outgrows its tier — never downward mid-task.
 
@@ -23,7 +23,7 @@ Phase 0 (Orient) runs for EVERY task — it is where the tier gets set. Tiers go
 
 - Everything not listed as "Not required" stays mandatory at that tier.
 - A task that exceeds its tier's definition mid-flight (an "S" fix now touching a third file) is mis-tiered: say so, re-tier, and run the newly required gates retroactively.
-- Skill descriptions written before tiers use absolutist triggers ("every task", "ANYTHING"). The tier table governs: read them as "every M/L task" — except verification and memory, which apply at every tier.
+- Some skill descriptions use absolutist triggers ("every task", "ANYTHING"). The tier table governs: read them as "every M/L task" — except verification and memory, which apply at every tier.
 
 ## The workflow: Plan → Execute → Critique → Loop → Ship
 
@@ -85,7 +85,7 @@ Phase 0 runs for every task; M and L tasks continue through Phases 1–5 in orde
 - Any choice between alternatives that a future reader would ask "why?" about gets an ADR in `docs/decisions/`, numbered sequentially, using `templates/decision.md`.
 - Record rejected alternatives and the reason for rejection. The rejection reasons are usually more valuable than the choice itself.
 
-## Precedence & coexistence (ADR 0005)
+## Precedence & coexistence
 
 This scaffold usually runs alongside a large global layer (`~/.claude` rules, plugins like superpowers/ECC) that overlaps it. Resolution order:
 
@@ -98,6 +98,7 @@ When a global process skill overlaps a scaffold skill (brainstorming, planning, 
 
 ## Slash commands
 
+- `/init-project <goal>` — bootstrap a fresh project created from this scaffold (run once, first session: roadmap, first memory, verification path)
 - `/plan <task>` — start Phase 1 for a task
 - `/critique` — run adversarial review on current work
 - `/handover` — write a handover now
